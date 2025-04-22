@@ -13,32 +13,32 @@ interface DataItem {
 const DATA: DataItem[] = [
     {
         key: 1,
-        src: "https://shadcnblocks.com/images/block/logos/github-icon.svg",
-        alt: "GitHub",
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg",
+        alt: "HTML",
         href: "https://github.com",
         width: 64,
         height: 64,
     },
     {
         key: 2,
-        src: "https://shadcnblocks.com/images/block/logos/google-icon.svg",
-        alt: "Google",
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
+        alt: "CSS",
         href: "https://google.com",
         width: 64,
         height: 64,
     },
     {
         key: 3,
-        src: "https://shadcnblocks.com/images/block/logos/notion-icon.svg",
-        alt: "Notion",
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg",
+        alt: "PHP",
         href: "https://notion.so",
         width: 64,
         height: 64,
     },
     {
         key: 4,
-        src: "https://shadcnblocks.com/images/block/logos/slack-icon.svg",
-        alt: "Slack",
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg",
+        alt: "Figma",
         href: "https://slack.com",
         width: 64,
         height: 64,
@@ -53,8 +53,8 @@ const DATA: DataItem[] = [
     },
     {
         key: 6,
-        src: "https://shadcnblocks.com/images/block/logos/vscode-icon.svg",
-        alt: "VS Code",
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg",
+        alt: "Nextjs",
         href: "https://code.visualstudio.com",
         width: 64,
         height: 64,
@@ -69,17 +69,9 @@ const DATA: DataItem[] = [
     },
     {
         key: 8,
-        src: "https://shadcnblocks.com/images/block/logos/spotify-icon.svg",
-        alt: "Spotify",
-        href: "https://spotify.com",
-        width: 64,
-        height: 64,
-    },
-    {
-        key: 9,
-        src: "https://shadcnblocks.com/images/block/logos/dropbox-icon.svg",
-        alt: "Dropbox",
-        href: "https://dropbox.com",
+        src: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/materialui/materialui-original.svg",
+        alt: "MaterialUI",
+        href: "https://reactjs.org",
         width: 64,
         height: 64,
     },
@@ -87,11 +79,15 @@ const DATA: DataItem[] = [
 
 const Integration = () => {
     return (
-        <section className="py-0 mb-10">
+        <section className="py-0">
             <div className="container">
-
+                <div className="flex flex-col items-center justify-center gap-4 text-center">
+                    <h2 className="text-4xl font-bold lg:text-5xl text-service-h3">
+                        Technical <span className="text-white">Skills</span>
+                    </h2>
+                </div>
                 {/* Marquee Section */}
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden mt-5">
                     <div className="flex w-full">
                         {/* First marquee group */}
                         <div className="flex shrink-0 animate-marquee items-center gap-4">

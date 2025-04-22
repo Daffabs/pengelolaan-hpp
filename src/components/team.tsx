@@ -1,61 +1,89 @@
-import { Github, Instagram, Linkedin } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from "react";
 
-type Person = {
-    id: string;
-    avatar: string;
-    name: string;
-    role: string;
-};
+const tabData = [
+    {
+        id: "pmi",
+        icon: "/images/pmi_logo2.jpg",
+        title: "Palang Merah Indonesia",
+        description: "A customer-friendly dashboard for viewing information",
+        image: "/images/web_pmi.png",
+        message: "Not Responsive",
+        link: "#",
+    },
+    {
+        id: "pg",
+        icon: "/images/logo_pg.jfif",
+        title: "Perdana Photo Group",
+        description: "Employee Performance Assessment System using the Profile Matching Method",
+        image: "/images/web_pg.png",
+        message: "Not Responsive",
+        link: "#",
+    },
+    {
+        id: "jagwar",
+        icon: "/images/logo_jagwar2.png",
+        title: "Dummy - Jagwar",
+        description: "A mockup project for a company profile",
+        image: "/images/web_jagwar.png",
+        message: "Responsive",
+        link: "https://jagwar.vercel.app/",
+    },
+    {
+        id: "indojasa",
+        icon: "/images/logo_indojasa.png",
+        title: "Indojasa Konsultan",
+        description: "A company profile website to introduce the company to users, and also allow the admin to modify the data.",
+        image: "/images/web_indojasa.png",
+        message: "Responsive",
+        link: "https://indojasakonsultan.com",
+    },
+];
+
 
 const Team = () => {
-    const [people, setPeople] = useState<Person[]>([]);
-
-    useEffect(() => {
-        fetch("https://api.jsonbin.io/v3/b/67d3374f8960c979a570fe4f", {
-            headers: {
-                "X-Master-Key": "$2a$10$l1P/ZCFMKlju7BePouiU7OBvhlSsFN1bkHwUgx4m.CtnBocYp3jcm", // Gantilah dengan API Key jika datamu Private
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => setPeople(data.record))
-            .catch((err) => console.error("Error fetching data:", err));
-    }, []);
+    const [active, setActive] = useState<string | null>(null);
 
     return (
-        <section id="team" className="py-2 p-10 bg-service-bg rounded-3xl" data-aos="fade-up"
-            data-aos-anchor-placement="center-bottom">
-            <div className="container flex flex-col items-center text-center">
-                <h2 className="my-6 text-pretty text-4xl font-bold lg:text-5xl">
-                    Temui Team <span className="text-team-txt">JAGWAR!</span>
+        <section className="py-6 p-10 bg-service-bg rounded-2xl" data-aos="fade-up">
+            <div className="container max-w-5xl mx-auto">
+                <h2 className="text-center text-4xl font-semibold lg:text-5xl text-visimisi-txt mb-5">
+                    Recent <span className="text-white">Projects</span>
                 </h2>
-            </div>
-            <div className="container mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-4 lg:px-32 mb-8">
-                {people.map((person) => (
-                    <div
-                        key={person.id}
-                        className="flex flex-col items-center bg-accent p-8 rounded-lg"
-                    >
-                        <Avatar className="mb-4 size-20 md:mb-5 lg:size-24">
-                            <AvatarImage src={person.avatar} />
-                            <AvatarFallback>{person.name}</AvatarFallback>
-                        </Avatar>
-                        <p className="text-center font-medium rounded-md bg-service-h3 inline-block px-2">{person.name}</p>
-                        <p className="text-center text-black">{person.role}</p>
-                        <div className="mt-2 flex gap-4">
-                            <a href="#">
-                                <Github className="size-4 text-muted-foreground" />
-                            </a>
-                            <a href="#">
-                                <Linkedin className="size-4 text-muted-foreground" />
-                            </a>
-                            <a href="#">
-                                <Instagram className="size-4 text-muted-foreground" />
-                            </a>
+
+                <div className="flex flex-col gap-4">
+                    {tabData.map((tab) => (
+                        <div key={tab.id}>
+                            {/* Trigger */}
+                            <button
+                                onClick={() => setActive(active === tab.id ? null : tab.id)}
+                                className="w-full text-left border rounded-md p-4 flex gap-4 items-center bg-background hover:border-primary/40"
+                            >
+                                <img src={tab.icon} alt={tab.title} className="w-10 h-10 rounded-full" />
+                                <div>
+                                    <h3 className="text-xl font-semibold text-Project-tittle">{tab.title}</h3>
+                                    <p className="text-muted-foreground">{tab.description}</p>
+                                </div>
+                            </button>
+
+                            {/* Content muncul di bawah trigger */}
+                            {active === tab.id && (
+                                <div className="mt-4 relative group">
+                                    <a href={tab.link} target="_blank" rel="noopener noreferrer" className="block">
+                                        <img
+                                            src={tab.image}
+                                            alt={tab.title}
+                                            className="aspect-video rounded-md object-cover w-full"
+                                        />
+                                        <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md text-white p-4 text-center">
+                                            <h3 className="text-xl font-bold mb-2">{tab.title}</h3>
+                                            <p className="text-xl font-bold">{tab.message}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            )}
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </section>
     );

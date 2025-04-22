@@ -14,11 +14,13 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center justify-center">
       <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
       <div className="container mx-auto">
-        <Navbar1 />
+        {/* <Navbar1 /> */}
         <HeroSatu />
         <Integration />
         <Service />
         <Visimisi />
+      </div>
+      <div className="w-full">
         <Team />
         {/* <Project /> */}
         <Contact />

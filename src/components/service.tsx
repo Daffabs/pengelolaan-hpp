@@ -6,31 +6,31 @@ const integrations = [
   {
     title: "Frontend Developer",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam, corporis!",
+      "Designing and developing fast, responsive, and intuitive user interfaces to enhance the overall user experience.",
     image: "https://shadcnblocks.com/images/block/block-1.svg",
   },
   {
     title: "UI/UX Designer",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam, corporis!",
+      "Designing user-friendly and efficient experiences with a focus on visual appeal, readability, and user flow.",
     image: "https://shadcnblocks.com/images/block/block-2.svg",
   },
   {
-    title: "Web Designer",
+    title: "Business Analyst",
     description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam, corporis!",
+      "Creating flowcharts, ERDs, and DFDs to clearly and systematically illustrate business processes and data flow.",
     image: "https://shadcnblocks.com/images/block/block-3.svg",
   },
 ];
 
 const Service = () => {
   return (
-    <section id="service" className="py-10 bg-service-bg rounded-3xl" data-aos="fade-up"
+    <section id="service" className="py-10 bg-service-bg rounded-2xl mt-10" data-aos="fade-up"
       data-aos-anchor-placement="center-bottom">
       <div className="container">
         <div className="w-full text-center flex justify-center">
           <h2 className="text-4xl font-bold lg:text-5xl text-service-h3">
-            Service <span className="text-white">Apa Yang Kami</span> Berikan
+            Services <span className="text-white">I Provide</span>
           </h2>
         </div>
         <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 p-10">
