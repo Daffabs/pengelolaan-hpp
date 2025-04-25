@@ -37,6 +37,15 @@ const tabData = [
         message: "Responsive",
         link: "https://indojasakonsultan.com",
     },
+    {
+        id: "odyssey",
+        icon: "/images/logo_odyssey.png",
+        title: "Dummy - Odyssey",
+        description: "A commerce platform used for buying and selling online.",
+        image: "/images/web_odyssey.png",
+        message: "Responsive",
+        link: "https://odyssey-sigma-ten.vercel.app/",
+    },
 ];
 
 
