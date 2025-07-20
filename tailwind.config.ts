@@ -9,43 +9,39 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Space Grotesk"', 'sans-serif'],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        navbar: {
-          text: "#697565",
-          hvr: "#B9FF66"
+        primary: "#7b61ff",
+        sidebar: {
+          biru: "#233657",
+          biru2: "#8EA4D2",
+          biru3: "#49516F",
+          hijau: "#A2FF00",
+          card: "#131313",
+          ungu: "#255F38",
+          border: "#255F38",
+          hover: "#a0a0a0",
+          abu: "#E6E7E8",
+          gelap: "#14161C",
+          abu2: "#1E1E1E",
         },
-        about: {
-          h1: "#EF0D33"
+        dashboard: {
+          card1:"#DCEDB9",
+          card2:"#D2E59E",
+          card3:"#CBD081",
+          card4:"#918868",
         },
-        service: {
-          // bg: "#111517",
-          bg: "#0b0b0b",
-          card: "#FFF",
-          h3: "#EF0D33"
-        },
-        visimisi: {
-          card: "#0b0b0b",
-          txt: "#EF0D33"
-        },
-        team: {
-          card: "#0b0b0b",
-          txt: "#EF0D33"
-        },
-        Project: {
-          card: "#FFF",
-          tittle: "#EF0D33"
-        },
-        contact: {
-          card: "#FFF",
-          h1: "#EF0D33"
-        },
-        Shadow: {
-          'custom': '6px 2px 35px rgb(236, 223, 204)', // Mengganti warna bayangan menjadi #22c55e
-        },
-        boxShadowAtas: {
-          'custom': '6px 2px 35px rgb(166, 225, 12)', // Mengganti warna bayangan menjadi #22c55e
+        datauang: {
+          kolomsearch:"#f9f9f9",
+          abu: "#E6E7E8",
+          abu2: "#1E1E1E",
+          button: "#CFF80B",
+          hijau: "#4C9F70",
+          biru: "#8EA4D2",
         },
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -54,10 +50,6 @@ export default {
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
-        },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

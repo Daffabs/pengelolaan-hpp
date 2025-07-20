@@ -1,33 +1,21 @@
-import React from "react";
-import { HeroSatu } from "@/components/heroSatu";
-import { Navbar1 } from "@/components/navbar";
-import { Integration } from "@/components/intergration";
-import { Service } from "@/components/service";
-import { Visimisi } from "@/components/visimisi";
-import { Team } from "@/components/team";
-// import { Project } from "@/components/project";
-import { Contact } from "@/components/contact";
-import { Footer } from "@/components/footer";
+"use client";
+import React, { useState } from "react";
+import Sidebar from "@/components/sidebar";
+import Dashboard from "@/components/dashboard";
 
 export default function Home() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center">
-      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      <div className="container mx-auto">
-        {/* <Navbar1 /> */}
-        <HeroSatu />
-        <Integration />
-        <Service />
-        <Visimisi />
-      </div>
-      <div className="w-full">
-        <Team />
-        {/* <Project /> */}
-        <Contact />
-      </div>
-      <div className="w-full">
-        <Footer />
+    <main className="min-h-screen flex">
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div className={`transition-all duration-300 w-full ${sidebarOpen ? "sm:ml-64" : "sm:ml-20"} p-6`}>
+        <Dashboard />
       </div>
     </main>
   );
-};
+}

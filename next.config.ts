@@ -1,8 +1,16 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  transpilePackages: ['@mui/material', '@toolpad/core'],
+  experimental: {
+    serverActions: true,
+    reactRoot: true,
+    esmExternals: 'loose',
+    typedRoutes: true // baru di Next 15, supaya routing TS lebih aman
+  },
   reactStrictMode: true,
+  images: {
+    domains: ["localhost", "yourdomain.com"], // Kalau kamu load image dari luar
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
