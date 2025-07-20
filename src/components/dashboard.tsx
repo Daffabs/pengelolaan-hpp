@@ -23,24 +23,33 @@ export default function Dashboard() {
     const [profitChartData, setProfitChartData] = useState<any>(null);
 
     useEffect(() => {
+        // Fetch uang masuk
         fetch("http://localhost/beesboard/backend/api/uang_masuk/get.php")
             .then(res => res.json())
             .then(json => {
                 if (json.status === "success") {
-                    const total = json.data.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0);
-                    setTotalUangMasuk(total);
+                    const sorted = json.data.sort((a: any, b: any) =>
+                        new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime()
+                    );
+                    setTotalUangMasuk(sorted.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0));
+                    setHistoriUangMasuk(sorted.slice(0, 5));
                 }
             });
 
+        // Fetch uang keluar
         fetch("http://localhost/beesboard/backend/api/uang_keluar/get.php")
             .then(res => res.json())
             .then(json => {
                 if (json.status === "success") {
-                    const total = json.data.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0);
-                    setTotalUangKeluar(total);
+                    const sorted = json.data.sort((a: any, b: any) =>
+                        new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime()
+                    );
+                    setTotalUangKeluar(sorted.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0));
+                    setHistoriUangKeluar(sorted.slice(0, 5));
                 }
             });
 
+        // Fetch orders
         fetch("http://localhost/beesboard/backend/api/get_orders.php")
             .then(res => res.json())
             .then(data => {
@@ -54,6 +63,9 @@ export default function Dashboard() {
                     profit: Number(item.laba) || 0,
                     namaPerusahaan: item.nama_perusahaan,
                 }));
+                setHistoriOrder(formatted.sort((a: any, b: any) =>
+                    new Date(b.date).getTime() - new Date(a.date).getTime()
+                ).slice(0, 5));
                 const totalPenjualan = formatted.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
                 const totalHPP = formatted.reduce((sum: number, d: any) => sum + (d.hpp || 0), 0);
                 const totalBiayaProduksi = totalHPP + totalHPP * 0.2;
@@ -142,6 +154,11 @@ export default function Dashboard() {
     ];
     const cardColors = ["#8EA4D2", "#6279B8", "#496F5D", "#4C9F70"];
 
+    const [historiUangMasuk, setHistoriUangMasuk] = useState<any[]>([]);
+    const [historiUangKeluar, setHistoriUangKeluar] = useState<any[]>([]);
+    const [historiOrder, setHistoriOrder] = useState<any[]>([]);
+
+
     return (
         <div className="max-h-screen sm:mt-0 mt-20 px-4 lg:px-8 space-y-6">
             {/* Kartu Ringkasan */}
@@ -169,27 +186,139 @@ export default function Dashboard() {
             {/* Grafik */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Grafik Penjualan */}
-                <div className="bg-white rounded-lg p-6 shadow w-full">
-                    <Typography variant="h6" className="mb-4 font-bold text-gray-700">Grafik Penjualan</Typography>
-                    <div className="h-[300px] sm:h-[400px]">
-                        {salesChartData ? (
-                            <Bar data={salesChartData} options={chartOptions} />
-                        ) : (
-                            <Typography variant="body2">Memuat grafik...</Typography>
-                        )}
+                <div className="bg-white rounded-3xl p-4 shadow w-full">
+                    <Typography variant="h6" className="mb-4 font-bold text-gray-700">
+                        Grafik Penjualan
+                    </Typography>
+                    <div className="overflow-x-auto md:overflow-x-visible">
+                        <div className="w-[700px] md:w-full h-[300px] sm:h-[400px]">
+                            {salesChartData ? (
+                                <Bar
+                                    data={salesChartData}
+                                    options={chartOptions}
+                                    style={{ width: "100%", height: "100%" }}
+                                />
+                            ) : (
+                                <Typography variant="body2">Memuat grafik...</Typography>
+                            )}
+                        </div>
                     </div>
                 </div>
 
                 {/* Grafik Laba */}
-                <div className="bg-white rounded-lg p-6 shadow w-full">
-                    <Typography variant="h6" className="mb-4 font-bold text-gray-700">Grafik Laba</Typography>
-                    <div className="h-[300px] sm:h-[400px]">
-                        {profitChartData ? (
-                            <Bar data={profitChartData} options={chartOptions} />
-                        ) : (
-                            <Typography variant="body2">Memuat grafik...</Typography>
-                        )}
+                <div className="bg-white rounded-3xl p-4 shadow w-full">
+                    <Typography variant="h6" className="mb-4 font-bold text-gray-700">
+                        Grafik Laba
+                    </Typography>
+                    <div className="overflow-x-auto md:overflow-x-visible">
+                        <div className="w-[700px] md:w-full h-[300px] sm:h-[400px]">
+                            {profitChartData ? (
+                                <Bar
+                                    data={profitChartData}
+                                    options={chartOptions}
+                                    style={{ width: "100%", height: "100%" }}
+                                />
+                            ) : (
+                                <Typography variant="body2">Memuat grafik...</Typography>
+                            )}
+                        </div>
                     </div>
+                </div>
+            </div>
+
+
+
+            {/* Histori Terbaru */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Uang Masuk */}
+                <Card className="shadow-md border border-gray-200" sx={{ borderRadius: 7 }}>
+                    <CardContent className="min-w-[280px]">
+                        <Typography variant="subtitle1" className="mb-2 font-semibold text-green-600">
+                            🟢 Uang Masuk Terbaru
+                        </Typography>
+                        <div className="overflow-x-auto">
+                            <table className="min-w-[500px] w-full text-sm">
+                                <thead>
+                                    <tr className="text-gray-600">
+                                        <th className="text-left w-[90px]">Tanggal</th>
+                                        <th className="text-left w-[120px]">Keterangan</th>
+                                        <th className="text-left w-[100px]">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {historiUangMasuk.map((item, index) => (
+                                        <tr key={index} className="border-t border-gray-200">
+                                            <td className="py-1">{item.date || "-"}</td>
+                                            <td className="text-gray-700 py-1 break-words">{item.keterangan}</td>
+                                            <td className="font-bold text-green-700 py-1">Rp {Number(item.jumlah).toLocaleString("id-ID")}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Uang Keluar */}
+                <Card className="shadow-md border border-gray-200" sx={{ borderRadius: 7 }}>
+                    <CardContent className="min-w-[280px]">
+                        <Typography variant="subtitle1" className="mb-2 font-semibold text-red-600">
+                            🔴 Uang Keluar Terbaru
+                        </Typography>
+                        <div className="overflow-x-auto">
+                            <table className="min-w-[500px] w-full text-sm">
+                                <thead>
+                                    <tr className="text-gray-600">
+                                        <th className="text-left w-[90px]">Tanggal</th>
+                                        <th className="text-left w-[120px]">Keterangan</th>
+                                        <th className="text-left w-[100px]">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {historiUangKeluar.map((item, index) => (
+                                        <tr key={index} className="border-t border-gray-200">
+                                            <td className="py-1">{item.date || "-"}</td>
+                                            <td className="text-gray-700 py-1 break-words">{item.keterangan}</td>
+                                            <td className="font-bold text-red-700 py-1">Rp {Number(item.jumlah).toLocaleString("id-ID")}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Data Order */}
+                <div className="md:col-span-2 flex justify-center w-full">
+                    <Card className="shadow-md border border-gray-200 w-full max-w-[530px]" sx={{ borderRadius: 7 }}>
+                        <CardContent className="max-w-[280px]">
+                            <Typography variant="subtitle1" className="mb-2 font-semibold text-blue-600">
+                                📦 Order Terbaru
+                            </Typography>
+                            <div className="overflow-x-auto md:overflow-x-visible">
+                                <table className="w-[600px] md:w-full text-sm min-w-[500px]">
+                                    <thead>
+                                        <tr className="text-gray-600">
+                                            <th className="text-left w-[180px]">Tanggal</th>
+                                            <th className="text-left w-[180px]">Perusahaan</th>
+                                            <th className="text-left w-[180px]">Produk</th>
+                                            <th className="text-left w-[180px]">Harga</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {historiOrder.map((item, index) => (
+                                            <tr key={index} className="border-t border-gray-200">
+                                                <td className="py-1">{item.date || "-"}</td>
+                                                <td className="text-gray-700 py-1 break-words">{item.namaPerusahaan}</td>
+                                                <td className="text-gray-700 py-1 break-words">{item.product}</td>
+                                                <td className="font-bold text-blue-700 py-1">Rp {Number(item.price).toLocaleString("id-ID")}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>

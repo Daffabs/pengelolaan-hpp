@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import Sidebar from "@/components/sidebar";
 import Dashboard from "@/components/dashboard";
 
+
 export default function Home() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <main className="min-h-screen flex">
