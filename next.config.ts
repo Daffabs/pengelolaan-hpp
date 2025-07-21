@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@mui/material', '@toolpad/core'],
+  transpilePackages: ['@mui/material'],
   experimental: {
     serverActions: true,
     reactRoot: true,

@@ -4,7 +4,7 @@ import Sidebar from "@/components/sidebar";
 import DataOrder from "@/components/order/dataorder";
 
 export default function Home() {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
 
     useEffect(() => {

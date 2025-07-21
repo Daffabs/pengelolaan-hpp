@@ -4,7 +4,7 @@ import Sidebar from "@/components/sidebar";
 import DataUang from "@/components/uang/datauang";
 
 export default function Home() {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
         <main className="min-h-screen flex">
