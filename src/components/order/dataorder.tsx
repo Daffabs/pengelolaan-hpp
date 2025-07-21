@@ -30,7 +30,7 @@ export default function DataOrder() {
     const [openDelete, setOpenDelete] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
-    const apiBase = "http://localhost/beesboard/backend/api";
+    const apiBase = "https://beesinaja.ct.ws/backend/api";
 
     useEffect(() => {
         fetchOrders();

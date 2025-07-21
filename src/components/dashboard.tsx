@@ -24,7 +24,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         // Fetch uang masuk
-        fetch("http://localhost/beesboard/backend/api/uang_masuk/get.php")
+        fetch("https://beesinaja.ct.ws/backend/api/uang_masuk/get.php")
             .then(res => res.json())
             .then(json => {
                 if (json.status === "success") {
@@ -37,7 +37,7 @@ export default function Dashboard() {
             });
 
         // Fetch uang keluar
-        fetch("http://localhost/beesboard/backend/api/uang_keluar/get.php")
+        fetch("https://beesinaja.ct.ws/backend/api/uang_keluar/get.php")
             .then(res => res.json())
             .then(json => {
                 if (json.status === "success") {
@@ -50,7 +50,7 @@ export default function Dashboard() {
             });
 
         // Fetch orders
-        fetch("http://localhost/beesboard/backend/api/get_orders.php")
+        fetch("https://beesinaja.ct.ws/backend/api/get_orders.php")
             .then(res => res.json())
             .then(data => {
                 const formatted = data.map((item: any) => ({

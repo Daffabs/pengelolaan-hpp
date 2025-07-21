@@ -20,7 +20,7 @@ interface Transaksi {
     jumlah: number;
 }
 
-const API_BASE = "http://localhost/beesboard/backend/api"; // ganti sesuai backend kamu
+const API_BASE = "https://beesinaja.ct.ws/backend/api"; // ganti sesuai backend kamu
 
 const exportToExcel = (data: Transaksi[], title: string) => {
     const worksheet = XLSX.utils.json_to_sheet(data);
