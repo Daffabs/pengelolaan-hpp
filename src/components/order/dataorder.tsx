@@ -37,6 +37,9 @@ export default function DataOrder() {
         fetchOrders();
     }, []);
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+
+
     const fetchOrders = async () => {
         try {
             const res = await fetch(apiBase);

@@ -154,6 +154,9 @@ export default function Dashboard() {
     ];
     const cardColors = ["#8EA4D2", "#6279B8", "#496F5D", "#4C9F70"];
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+
+
     return (
         <div className="max-h-screen sm:mt-0 mt-20 px-4 lg:px-8 space-y-6">
             {/* Kartu Ringkasan */}

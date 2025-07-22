@@ -16,6 +16,7 @@ app.use(cors({
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
+  optionsSuccessStatus: 200
 }));
 
 app.use(bodyParser.json());
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
   res.send('API Backend Express berjalan!');
 });
 
-app.listen(3001, () => {
-  console.log('Server berjalan di http://localhost:3001');
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server berjalan di http://localhost:${PORT}`);
 });

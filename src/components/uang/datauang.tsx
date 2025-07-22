@@ -221,6 +221,9 @@ const DataUang: React.FC = () => {
 
     const cardColors = ["#8EA4D2", "#6279B8", "#496F5D", "#4C9F70"];
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+
+
     return (
         <div className="max-h-screen sm:mt-0 mt-20 px-4 lg:px-8 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
