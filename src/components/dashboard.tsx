@@ -22,40 +22,40 @@ export default function Dashboard() {
     const [salesChartData, setSalesChartData] = useState<any>(null);
     const [profitChartData, setProfitChartData] = useState<any>(null);
 
+    const [historiUangMasuk, setHistoriUangMasuk] = useState<any[]>([]);
+    const [historiUangKeluar, setHistoriUangKeluar] = useState<any[]>([]);
+    const [historiOrder, setHistoriOrder] = useState<any[]>([]);
+
     useEffect(() => {
         // Fetch uang masuk
-        fetch("https://beesinaja.ct.ws/backend/api/uang_masuk/get.php")
+        fetch("http://localhost:3001/api/uang-masuk")
             .then(res => res.json())
-            .then(json => {
-                if (json.status === "success") {
-                    const sorted = json.data.sort((a: any, b: any) =>
-                        new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime()
-                    );
-                    setTotalUangMasuk(sorted.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0));
-                    setHistoriUangMasuk(sorted.slice(0, 5));
-                }
+            .then(data => {
+                const sorted = data.sort((a: any, b: any) =>
+                    new Date(b.date).getTime() - new Date(a.date).getTime()
+                );
+                setTotalUangMasuk(sorted.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0));
+                setHistoriUangMasuk(sorted.slice(0, 5));
             });
 
         // Fetch uang keluar
-        fetch("https://beesinaja.ct.ws/backend/api/uang_keluar/get.php")
+        fetch("http://localhost:3001/api/uang-keluar")
             .then(res => res.json())
-            .then(json => {
-                if (json.status === "success") {
-                    const sorted = json.data.sort((a: any, b: any) =>
-                        new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime()
-                    );
-                    setTotalUangKeluar(sorted.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0));
-                    setHistoriUangKeluar(sorted.slice(0, 5));
-                }
+            .then(data => {
+                const sorted = data.sort((a: any, b: any) =>
+                    new Date(b.date).getTime() - new Date(a.date).getTime()
+                );
+                setTotalUangKeluar(sorted.reduce((sum: number, d: any) => sum + Number(d.jumlah || 0), 0));
+                setHistoriUangKeluar(sorted.slice(0, 5));
             });
 
         // Fetch orders
-        fetch("https://beesinaja.ct.ws/backend/api/get_orders.php")
+        fetch("http://localhost:3001/api/orders")
             .then(res => res.json())
             .then(data => {
                 const formatted = data.map((item: any) => ({
                     id: Number(item.id_data_order),
-                    date: item.tanggal,
+                    date: item.tanggal, // Ganti ke item.date jika field di DB sudah diganti
                     product: item.nama_produk,
                     quantity: Number(item.jumlah_barang) || 0,
                     price: (Number(item.harga_satuan) || 0) * (Number(item.jumlah_barang) || 0),
@@ -154,11 +154,6 @@ export default function Dashboard() {
     ];
     const cardColors = ["#8EA4D2", "#6279B8", "#496F5D", "#4C9F70"];
 
-    const [historiUangMasuk, setHistoriUangMasuk] = useState<any[]>([]);
-    const [historiUangKeluar, setHistoriUangKeluar] = useState<any[]>([]);
-    const [historiOrder, setHistoriOrder] = useState<any[]>([]);
-
-
     return (
         <div className="max-h-screen sm:mt-0 mt-20 px-4 lg:px-8 space-y-6">
             {/* Kartu Ringkasan */}
@@ -225,8 +220,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-
-
 
             {/* Histori Terbaru */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

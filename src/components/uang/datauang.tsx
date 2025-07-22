@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import * as XLSX from "xlsx";
-import { saveAs } from "file-saver"; // Untuk menyimpan file (opsional)
+import { saveAs } from "file-saver";
 
 interface FilterState {
     year: string;
@@ -20,7 +20,7 @@ interface Transaksi {
     jumlah: number;
 }
 
-const API_BASE = "https://beesinaja.ct.ws/backend/api/"; // ganti sesuai backend kamu
+const API_BASE = "http://localhost:3001/api";
 
 const exportToExcel = (data: Transaksi[], title: string) => {
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -40,8 +40,6 @@ const TEXTFIELD_STYLE = {
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#E6E7E8" },
 };
 
-// ---------------- Filter Components ---------------- //
-
 const TextInputField = ({
     label, value, field, onChange, type = "text",
 }: {
@@ -59,8 +57,6 @@ const TextInputField = ({
     />
 );
 
-// ---------------- Main Component ---------------- //
-
 const DataUang: React.FC = () => {
     const [filters, setFilters] = useState<FilterState>({ year: "", search: "" });
     const [uangMasukData, setUangMasukData] = useState<Transaksi[]>([]);
@@ -71,7 +67,6 @@ const DataUang: React.FC = () => {
     const [editingData, setEditingData] = useState<Transaksi | null>(null);
     const [editingType, setEditingType] = useState<"masuk" | "keluar">("masuk");
 
-    // Fetch data on load
     useEffect(() => {
         fetchData("masuk");
         fetchData("keluar");
@@ -79,10 +74,16 @@ const DataUang: React.FC = () => {
 
     const fetchData = async (type: "masuk" | "keluar") => {
         try {
-            const res = await fetch(`${API_BASE}/uang_${type}/get.php`);
-            const json = await res.json();
-            if (json.status === "success") {
-                type === "masuk" ? setUangMasukData(json.data) : setUangKeluarData(json.data);
+            const endpoint = type === "masuk" ? "uang-masuk" : "uang-keluar";
+            const res = await fetch(`${API_BASE}/${endpoint}`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                type === "masuk" ? setUangMasukData(data) : setUangKeluarData(data);
+            } else {
+                // Jika backend Anda mengembalikan {data: [...]}
+                type === "masuk"
+                    ? setUangMasukData(data.data || [])
+                    : setUangKeluarData(data.data || []);
             }
         } catch (err) {
             console.error("Fetch error:", err);
@@ -103,14 +104,22 @@ const DataUang: React.FC = () => {
         if (!form.date || !form.keterangan || !form.jumlah) return;
 
         try {
-            const res = await fetch(`${API_BASE}/uang_${type}/add.php`, {
+            const endpoint = type === "masuk" ? "uang-masuk" : "uang-keluar";
+            const res = await fetch(`${API_BASE}/${endpoint}`, {
                 method: "POST",
-                body: new URLSearchParams(form),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    date: form.date,
+                    keterangan: form.keterangan,
+                    jumlah: Number(form.jumlah),
+                }),
             });
             const json = await res.json();
-            if (json.status === "success") {
+            if (json.message?.includes("berhasil")) {
                 fetchData(type);
-                type === "masuk" ? setFormMasuk({ date: "", keterangan: "", jumlah: "" }) : setFormKeluar({ date: "", keterangan: "", jumlah: "" });
+                type === "masuk"
+                    ? setFormMasuk({ date: "", keterangan: "", jumlah: "" })
+                    : setFormKeluar({ date: "", keterangan: "", jumlah: "" });
             }
         } catch (err) {
             console.error("Add error:", err);
@@ -125,12 +134,12 @@ const DataUang: React.FC = () => {
 
     const handleDelete = async (id: number, type: "masuk" | "keluar") => {
         try {
-            const res = await fetch(`${API_BASE}/uang_${type}/delete.php`, {
-                method: "POST",
-                body: new URLSearchParams({ id: String(id) }),
+            const endpoint = type === "masuk" ? "uang-masuk" : "uang-keluar";
+            const res = await fetch(`${API_BASE}/${endpoint}/${id}`, {
+                method: "DELETE",
             });
             const json = await res.json();
-            if (json.status === "success") fetchData(type);
+            if (json.message?.includes("berhasil")) fetchData(type);
         } catch (err) {
             console.error("Delete error:", err);
         }
@@ -145,17 +154,18 @@ const DataUang: React.FC = () => {
     const handleModalSave = async () => {
         if (editingData) {
             try {
-                const res = await fetch(`${API_BASE}/uang_${editingType}/edit.php`, {
-                    method: "POST",
-                    body: new URLSearchParams({
-                        id: String(editingData.id),
+                const endpoint = editingType === "masuk" ? "uang-masuk" : "uang-keluar";
+                const res = await fetch(`${API_BASE}/${endpoint}/${editingData.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
                         date: editingData.date,
                         keterangan: editingData.keterangan,
-                        jumlah: String(editingData.jumlah),
+                        jumlah: editingData.jumlah,
                     }),
                 });
                 const json = await res.json();
-                if (json.status === "success") {
+                if (json.message?.includes("berhasil")) {
                     fetchData(editingType);
                     setModalOpen(false);
                     setEditingData(null);
@@ -201,7 +211,6 @@ const DataUang: React.FC = () => {
         (!filters.search || row.keterangan.toLowerCase().includes(filters.search.toLowerCase()))
     );
 
-    // Hitung total sesuai data yang difilter dan pastikan parsing ke angka
     const totalUangMasuk = filteredMasuk.reduce((sum, d) => sum + Number(d.jumlah || 0), 0);
     const totalUangKeluar = filteredKeluar.reduce((sum, d) => sum + Number(d.jumlah || 0), 0);
 
@@ -370,8 +379,6 @@ const DataUang: React.FC = () => {
             </Dialog>
         </div>
     );
-
-
 };
 
 export default DataUang;

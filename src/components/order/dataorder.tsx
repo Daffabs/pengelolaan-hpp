@@ -30,7 +30,8 @@ export default function DataOrder() {
     const [openDelete, setOpenDelete] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
-    const apiBase = "https://beesinaja.ct.ws/backend/api";
+    // Ganti ke endpoint Express
+    const apiBase = "http://localhost:3001/api/orders";
 
     useEffect(() => {
         fetchOrders();
@@ -38,16 +39,14 @@ export default function DataOrder() {
 
     const fetchOrders = async () => {
         try {
-            const res = await fetch(`${apiBase}/get_orders.php`);
+            const res = await fetch(apiBase);
             const data = await res.json();
-            console.log("📦 Data dari backend:", data); // Debug
-
             const formatted = data.map((item: any) => ({
                 id: Number(item.id_data_order),
                 date: item.tanggal,
                 product: item.nama_produk,
                 quantity: Number(item.jumlah_barang) || 0,
-                price: (Number(item.harga_satuan) || 0) * (Number(item.jumlah_barang) || 0),
+                price: Number(item.harga_satuan) * Number(item.jumlah_barang) || 0,
                 hpp: Number(item.hpp) || 0,
                 profit: Number(item.laba) || 0,
                 namaPerusahaan: item.nama_perusahaan,
@@ -70,24 +69,22 @@ export default function DataOrder() {
         if (!form.date || !form.product || !form.namaPerusahaan || isNaN(price) || isNaN(quantity)) return;
 
         const totalPrice = price * quantity;
-        const hpp = totalPrice * 0.6; //perhitungan hpp
+        const hpp = totalPrice * 0.6;
         const profit = totalPrice - hpp;
 
         try {
-            const payload = new URLSearchParams({
-                tanggal: form.date,
-                nama_perusahaan: form.namaPerusahaan,
-                nama_produk: form.product,
-                jumlah_barang: quantity.toString(),
-                harga_satuan: price.toString(),
-                hpp: hpp.toString(),
-                laba: profit.toString(),
-            });
-
-            const res = await fetch(`${apiBase}/add_order.php`, {
+            const res = await fetch(apiBase, {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: payload,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    tanggal: form.date,
+                    nama_perusahaan: form.namaPerusahaan,
+                    nama_produk: form.product,
+                    jumlah_barang: quantity,
+                    harga_satuan: price,
+                    hpp,
+                    laba: profit,
+                }),
             });
 
             const json = await res.json();
@@ -120,18 +117,17 @@ export default function DataOrder() {
         const profit = totalPrice - hpp;
 
         try {
-            await fetch(`${apiBase}/update_order.php`, {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams({
-                    id: editForm.id.toString(),
+            await fetch(`${apiBase}/${editForm.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
                     tanggal: editForm.date,
                     nama_perusahaan: editForm.namaPerusahaan,
                     nama_produk: editForm.product,
-                    jumlah_barang: quantity.toString(),
-                    harga_satuan: price.toString(),
-                    hpp: hpp.toString(),
-                    laba: profit.toString(),
+                    jumlah_barang: quantity,
+                    harga_satuan: price,
+                    hpp,
+                    laba: profit,
                 }),
             });
             await fetchOrders();
@@ -149,10 +145,8 @@ export default function DataOrder() {
     const confirmDelete = async () => {
         if (deleteId !== null) {
             try {
-                await fetch(`${apiBase}/delete_order.php`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams({ id: deleteId.toString() }),
+                await fetch(`${apiBase}/${deleteId}`, {
+                    method: "DELETE",
                 });
                 await fetchOrders();
                 setOpenDelete(false);
@@ -166,7 +160,7 @@ export default function DataOrder() {
     const totalPenjualan = orderData.reduce((sum, d) => sum + (d.price || 0), 0);
     const totalHPP = orderData.reduce((sum, d) => sum + (d.hpp || 0), 0);
     const totalProfit = orderData.reduce((sum, d) => sum + (d.profit || 0), 0);
-    const totalBiayaProduksi = totalHPP + totalHPP * 0.2; //perhitungan total biaya produksi
+    const totalBiayaProduksi = totalHPP + totalHPP * 0.2;
 
     const columns: GridColDef[] = [
         { field: "date", headerName: "Tanggal", width: 130, valueFormatter: ({ value }) => new Date(value).toLocaleDateString("id-ID") },
