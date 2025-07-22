@@ -20,7 +20,6 @@ interface Transaksi {
     jumlah: number;
 }
 
-const API_BASE = "https://beesinaja.up.railway.app/api";
 
 const exportToExcel = (data: Transaksi[], title: string) => {
     const worksheet = XLSX.utils.json_to_sheet(data);
