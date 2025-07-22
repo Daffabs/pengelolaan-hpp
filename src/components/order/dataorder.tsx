@@ -188,7 +188,7 @@ export default function DataOrder() {
         { title: "Total Penjualan", value: `Rp ${totalPenjualan.toLocaleString("id-ID")}` },
         { title: "Total Biaya Produksi", value: `Rp ${totalBiayaProduksi.toLocaleString("id-ID")}` },
         { title: "Total HPP", value: `Rp ${totalHPP.toLocaleString("id-ID")}` },
-        { title: "Laba Kotor", value: `Rp ${totalProfit.toLocaleString("id-ID")}` },
+        { title: "Laba Kotorr", value: `Rp ${totalProfit.toLocaleString("id-ID")}` },
     ];
 
     const cardColors = ["#8EA4D2", "#6279B8", "#496F5D", "#4C9F70"];
