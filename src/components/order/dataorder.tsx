@@ -31,7 +31,7 @@ export default function DataOrder() {
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
     // Ganti ke endpoint Express
-    const apiBase = "http://localhost:3001/api/orders";
+    const apiBase = "https://beesinaja.up.railway.app/api/orders";
 
     useEffect(() => {
         fetchOrders();

@@ -6,7 +6,18 @@ const uangMasukRoutes = require('./routes/uangMasukRoutes');
 const uangKeluarRoutes = require('./routes/uangKeluarRoutes');
 
 const app = express();
-app.use(cors());
+
+// Ganti dengan domain frontend Vercel Anda
+const allowedOrigins = [
+  "https://beesinaja.vercel.app", // contoh: https://beesboard.vercel.app
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
+
 app.use(bodyParser.json());
 
 app.use('/api/orders', orderRoutes);

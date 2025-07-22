@@ -28,7 +28,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         // Fetch uang masuk
-        fetch("http://localhost:3001/api/uang-masuk")
+        fetch("https://beesinaja.up.railway.app/api/uang-masuk")
             .then(res => res.json())
             .then(data => {
                 const sorted = data.sort((a: any, b: any) =>
@@ -39,7 +39,7 @@ export default function Dashboard() {
             });
 
         // Fetch uang keluar
-        fetch("http://localhost:3001/api/uang-keluar")
+        fetch("https://beesinaja.up.railway.app/api/uang-keluar")
             .then(res => res.json())
             .then(data => {
                 const sorted = data.sort((a: any, b: any) =>
@@ -50,7 +50,7 @@ export default function Dashboard() {
             });
 
         // Fetch orders
-        fetch("http://localhost:3001/api/orders")
+        fetch("https://beesinaja.up.railway.app/api/orders")
             .then(res => res.json())
             .then(data => {
                 const formatted = data.map((item: any) => ({
