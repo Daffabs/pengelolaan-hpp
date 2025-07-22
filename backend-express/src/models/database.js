@@ -1,13 +1,21 @@
 const mysql = require('mysql2');
+require('dotenv').config(); // Wajib agar .env terbaca
 
-// Gunakan DATABASE_URL dari environment Railway jika ada, fallback ke lokal untuk development
-const pool = process.env.DATABASE_URL
-  ? mysql.createPool(process.env.DATABASE_URL)
-  : mysql.createPool({
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'hpp_keuangan'
-    });
+const db = mysql.createConnection({
+  host: "yamabiko.proxy.rlwy.net",
+  port: 38611,
+  user: "root",
+  password: "nJBDhFWkUFXXSWLtvbrXsetGOHLtdMDQ",
+  database: "railway"
+});
 
-module.exports = pool.promise();
+
+db.connect((err) => {
+  if (err) {
+    console.error("❌ Gagal konek ke database:", err.message);
+  } else {
+    console.log("✅ Berhasil konek ke database Railway");
+  }
+});
+
+module.exports = db;
