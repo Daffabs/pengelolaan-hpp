@@ -29,7 +29,4 @@ app.get('/', (req, res) => {
   res.send('API Backend Express berjalan!');
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
-});
+module.exports = app; // ini WAJIB ditaruh paling akhir
