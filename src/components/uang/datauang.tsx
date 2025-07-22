@@ -268,7 +268,7 @@ const DataUang: React.FC = () => {
                             <CardContent>
                                 <div className="flex items-center justify-between">
                                     <Typography variant="subtitle1" className="font-semibold">
-                                        🟢 History Uang Masuk
+                                        🟢 History Uang Masukk
                                     </Typography>
                                     <Button
                                         variant="outlined"
