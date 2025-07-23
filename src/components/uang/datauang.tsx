@@ -7,6 +7,7 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import axios from 'axios';
 
 interface FilterState {
     year: string;
@@ -19,7 +20,6 @@ interface Transaksi {
     keterangan: string;
     jumlah: number;
 }
-
 
 const exportToExcel = (data: Transaksi[], title: string) => {
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -66,6 +66,8 @@ const DataUang: React.FC = () => {
     const [editingData, setEditingData] = useState<Transaksi | null>(null);
     const [editingType, setEditingType] = useState<"masuk" | "keluar">("masuk");
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+
     useEffect(() => {
         fetchData("masuk");
         fetchData("keluar");
@@ -74,16 +76,10 @@ const DataUang: React.FC = () => {
     const fetchData = async (type: "masuk" | "keluar") => {
         try {
             const endpoint = type === "masuk" ? "uang-masuk" : "uang-keluar";
-            const res = await fetch(`${API_BASE}/${endpoint}`);
-            const data = await res.json();
-            if (Array.isArray(data)) {
-                type === "masuk" ? setUangMasukData(data) : setUangKeluarData(data);
-            } else {
-                // Jika backend Anda mengembalikan {data: [...]}
-                type === "masuk"
-                    ? setUangMasukData(data.data || [])
-                    : setUangKeluarData(data.data || []);
-            }
+            const res = await axios.get(`${API_BASE}/${endpoint}`);
+            const data = res.data;
+            const finalData = Array.isArray(data) ? data : data.data || [];
+            type === "masuk" ? setUangMasukData(finalData) : setUangKeluarData(finalData);
         } catch (err) {
             console.error("Fetch error:", err);
         }
@@ -104,17 +100,13 @@ const DataUang: React.FC = () => {
 
         try {
             const endpoint = type === "masuk" ? "uang-masuk" : "uang-keluar";
-            const res = await fetch(`${API_BASE}/${endpoint}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    date: form.date,
-                    keterangan: form.keterangan,
-                    jumlah: Number(form.jumlah),
-                }),
+            const res = await axios.post(`${API_BASE}/${endpoint}`, {
+                date: form.date,
+                keterangan: form.keterangan,
+                jumlah: Number(form.jumlah),
             });
-            const json = await res.json();
-            if (json.message?.includes("berhasil")) {
+
+            if (res.data.message?.includes("berhasil")) {
                 fetchData(type);
                 type === "masuk"
                     ? setFormMasuk({ date: "", keterangan: "", jumlah: "" })
@@ -134,11 +126,8 @@ const DataUang: React.FC = () => {
     const handleDelete = async (id: number, type: "masuk" | "keluar") => {
         try {
             const endpoint = type === "masuk" ? "uang-masuk" : "uang-keluar";
-            const res = await fetch(`${API_BASE}/${endpoint}/${id}`, {
-                method: "DELETE",
-            });
-            const json = await res.json();
-            if (json.message?.includes("berhasil")) fetchData(type);
+            const res = await axios.delete(`${API_BASE}/${endpoint}/${id}`);
+            if (res.data.message?.includes("berhasil")) fetchData(type);
         } catch (err) {
             console.error("Delete error:", err);
         }
@@ -154,17 +143,12 @@ const DataUang: React.FC = () => {
         if (editingData) {
             try {
                 const endpoint = editingType === "masuk" ? "uang-masuk" : "uang-keluar";
-                const res = await fetch(`${API_BASE}/${endpoint}/${editingData.id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        date: editingData.date,
-                        keterangan: editingData.keterangan,
-                        jumlah: editingData.jumlah,
-                    }),
+                const res = await axios.put(`${API_BASE}/${endpoint}/${editingData.id}`, {
+                    date: editingData.date,
+                    keterangan: editingData.keterangan,
+                    jumlah: editingData.jumlah,
                 });
-                const json = await res.json();
-                if (json.message?.includes("berhasil")) {
+                if (res.data.message?.includes("berhasil")) {
                     fetchData(editingType);
                     setModalOpen(false);
                     setEditingData(null);
@@ -174,31 +158,6 @@ const DataUang: React.FC = () => {
             }
         }
     };
-
-    const columns = (type: "masuk" | "keluar"): GridColDef[] => [
-        {
-            field: "date", headerName: "Tanggal", width: 140,
-            valueFormatter: (params) => {
-                const d = new Date(params.value);
-                return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-            },
-        },
-        { field: "keterangan", headerName: "Keterangan", width: 180 },
-        {
-            field: "jumlah", headerName: "Jumlah", width: 160,
-            valueFormatter: (params) => `Rp ${params.value.toLocaleString("id-ID")}`,
-        },
-        {
-            field: "aksi", headerName: "Aksi", width: 180,
-            renderCell: (params) => (
-                <>
-                    <Button size="small" variant="outlined" onClick={() => handleEdit(params.row, type)}>Edit</Button>
-                    <Button size="small" variant="outlined" color="error" className="ml-2"
-                        onClick={() => handleDelete(params.row.id, type)}>Hapus</Button>
-                </>
-            ),
-        },
-    ];
 
     const filteredMasuk = uangMasukData.filter(row =>
         (!filters.year || row.date.includes(filters.year)) &&
@@ -210,17 +169,45 @@ const DataUang: React.FC = () => {
         (!filters.search || row.keterangan.toLowerCase().includes(filters.search.toLowerCase()))
     );
 
-    const totalUangMasuk = filteredMasuk.reduce((sum, d) => sum + Number(d.jumlah || 0), 0);
-    const totalUangKeluar = filteredKeluar.reduce((sum, d) => sum + Number(d.jumlah || 0), 0);
+    const totalMasuk = uangMasukData.reduce((sum, item) => sum + item.jumlah, 0);
+    const totalKeluar = uangKeluarData.reduce((sum, item) => sum + item.jumlah, 0);
+    const saldo = totalMasuk - totalKeluar;
 
     const cardData = [
-        { title: "Total Uang Masuk", value: totalUangMasuk },
-        { title: "Total Uang Keluar", value: totalUangKeluar },
+        { title: "Total Uang Masuk", value: totalMasuk },
+        { title: "Total Uang Keluar", value: totalKeluar },
+        { title: "Saldo Akhir", value: saldo },
+        { title: "Transaksi", value: uangMasukData.length + uangKeluarData.length },
     ];
 
-    const cardColors = ["#8EA4D2", "#6279B8", "#496F5D", "#4C9F70"];
+    const cardColors = ["#2ecc71", "#e74c3c", "#3498db", "#9b59b6"];
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+    const columns = (type: "masuk" | "keluar"): GridColDef[] => [
+        { field: "id", headerName: "ID", width: 70 },
+        { field: "date", headerName: "Tanggal", width: 130 },
+        { field: "keterangan", headerName: "Keterangan", flex: 1 },
+        {
+            field: "jumlah",
+            headerName: "Jumlah",
+            width: 150,
+            valueFormatter: (params) => `Rp ${params.value.toLocaleString("id-ID")}`,
+        },
+        {
+            field: "actions",
+            headerName: "Aksi",
+            width: 160,
+            renderCell: (params) => (
+                <div className="flex gap-2">
+                    <Button size="small" variant="outlined" onClick={() => handleEdit(params.row, type)}>
+                        Edit
+                    </Button>
+                    <Button size="small" variant="outlined" color="error" onClick={() => handleDelete(params.row.id, type)}>
+                        Hapus
+                    </Button>
+                </div>
+            ),
+        },
+    ];
 
 
     return (

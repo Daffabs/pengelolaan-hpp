@@ -7,9 +7,10 @@ const uangKeluarRoutes = require('./routes/uangKeluarRoutes');
 
 const app = express();
 
-// Ganti dengan domain frontend Vercel Anda
+// ✅ Domain frontend yang diizinkan
 const allowedOrigins = [
-  "https://beesinaja.vercel.app", // contoh: https://beesboard.vercel.app
+  "https://beesinaja.vercel.app",
+  "http://localhost:3000", // tambahkan juga untuk dev lokal
 ];
 
 app.use(cors({
@@ -25,13 +26,10 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/uang-masuk', uangMasukRoutes);
 app.use('/api/uang-keluar', uangKeluarRoutes);
 
+// Tes endpoint
 app.get('/', (req, res) => {
   res.send('API Backend Express berjalan!');
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
-});
-
-module.exports = app; // ✅ WAJIB ADA
+// ❌ Jangan ada app.listen() di sini!
+module.exports = app; // ✅ WAJIB ADA agar bisa dipakai di server.js

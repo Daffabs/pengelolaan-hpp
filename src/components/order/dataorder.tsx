@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import axios from "axios";
 
 interface Order {
     id: number;
@@ -30,20 +31,16 @@ export default function DataOrder() {
     const [openDelete, setOpenDelete] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
-    // Ganti ke endpoint Express
-    const apiBase = "https://beesinaja.up.railway.app/api/orders";
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001/api/orders";
 
     useEffect(() => {
         fetchOrders();
     }, []);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
-
-
     const fetchOrders = async () => {
         try {
-            const res = await fetch(apiBase);
-            const data = await res.json();
+            const res = await axios.get(apiBase);
+            const data = res.data;
             const formatted = data.map((item: any) => ({
                 id: Number(item.id_data_order),
                 date: item.tanggal,
@@ -76,22 +73,15 @@ export default function DataOrder() {
         const profit = totalPrice - hpp;
 
         try {
-            const res = await fetch(apiBase, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    tanggal: form.date,
-                    nama_perusahaan: form.namaPerusahaan,
-                    nama_produk: form.product,
-                    jumlah_barang: quantity,
-                    harga_satuan: price,
-                    hpp,
-                    laba: profit,
-                }),
+            await axios.post(apiBase, {
+                tanggal: form.date,
+                nama_perusahaan: form.namaPerusahaan,
+                nama_produk: form.product,
+                jumlah_barang: quantity,
+                harga_satuan: price,
+                hpp,
+                laba: profit,
             });
-
-            const json = await res.json();
-            console.log("🧾 Respon dari backend:", json);
 
             await fetchOrders();
             setForm({ date: "", product: "", quantity: "", price: "", namaPerusahaan: "" });
@@ -120,21 +110,18 @@ export default function DataOrder() {
         const profit = totalPrice - hpp;
 
         try {
-            await fetch(`${apiBase}/${editForm.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    tanggal: editForm.date,
-                    nama_perusahaan: editForm.namaPerusahaan,
-                    nama_produk: editForm.product,
-                    jumlah_barang: quantity,
-                    harga_satuan: price,
-                    hpp,
-                    laba: profit,
-                }),
+            await axios.put(`${apiBase}/${editForm.id}`, {
+                tanggal: editForm.date,
+                nama_perusahaan: editForm.namaPerusahaan,
+                nama_produk: editForm.product,
+                jumlah_barang: quantity,
+                harga_satuan: price,
+                hpp,
+                laba: profit,
             });
             await fetchOrders();
             setOpenEdit(false);
+            setEditForm({ id: 0, date: "", product: "", quantity: "", price: "", namaPerusahaan: "" });
         } catch (err) {
             console.error("❌ Gagal update data:", err);
         }
@@ -148,9 +135,7 @@ export default function DataOrder() {
     const confirmDelete = async () => {
         if (deleteId !== null) {
             try {
-                await fetch(`${apiBase}/${deleteId}`, {
-                    method: "DELETE",
-                });
+                await axios.delete(`${apiBase}/${deleteId}`);
                 await fetchOrders();
                 setOpenDelete(false);
                 setDeleteId(null);
@@ -193,15 +178,12 @@ export default function DataOrder() {
 
     const cardColors = ["#8EA4D2", "#6279B8", "#496F5D", "#4C9F70"];
 
-    // Tambah state filter
     const [filterDate, setFilterDate] = useState("");
     const [filterSearch, setFilterSearch] = useState("");
 
-    // Handler filter
     const handleFilterDateChange = (e: React.ChangeEvent<HTMLInputElement>) => setFilterDate(e.target.value);
     const handleFilterSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setFilterSearch(e.target.value);
 
-    // Filter data
     const filteredOrderData = orderData.filter(order => {
         const matchDate = filterDate ? order.date === filterDate : true;
         const matchSearch = filterSearch
