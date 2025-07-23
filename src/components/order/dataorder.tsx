@@ -31,7 +31,7 @@ export default function DataOrder() {
     const [openDelete, setOpenDelete] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
-    const apiBase = process.env.NEXT_PUBLIC_API_URL!;
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL!;
 
     useEffect(() => {
         fetchOrders();
@@ -39,7 +39,7 @@ export default function DataOrder() {
 
     const fetchOrders = async () => {
         try {
-            const res = await axios.get(apiBase);
+            const res = await axios.get(API_BASE);
             const data = res.data;
             const formatted = data.map((item: any) => ({
                 id: Number(item.id_data_order),
@@ -73,7 +73,7 @@ export default function DataOrder() {
         const profit = totalPrice - hpp;
 
         try {
-            await axios.post(apiBase, {
+            await axios.post(API_BASE, {
                 tanggal: form.date,
                 nama_perusahaan: form.namaPerusahaan,
                 nama_produk: form.product,
@@ -110,7 +110,7 @@ export default function DataOrder() {
         const profit = totalPrice - hpp;
 
         try {
-            await axios.put(`${apiBase}/${editForm.id}`, {
+            await axios.put(`${API_BASE}/${editForm.id}`, {
                 tanggal: editForm.date,
                 nama_perusahaan: editForm.namaPerusahaan,
                 nama_produk: editForm.product,
@@ -135,7 +135,7 @@ export default function DataOrder() {
     const confirmDelete = async () => {
         if (deleteId !== null) {
             try {
-                await axios.delete(`${apiBase}/${deleteId}`);
+                await axios.delete(`${API_BASE}/${deleteId}`);
                 await fetchOrders();
                 setOpenDelete(false);
                 setDeleteId(null);
