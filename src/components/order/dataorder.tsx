@@ -31,7 +31,7 @@ export default function DataOrder() {
     const [openDelete, setOpenDelete] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001/api/orders";
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/orders";
 
     useEffect(() => {
         fetchOrders();

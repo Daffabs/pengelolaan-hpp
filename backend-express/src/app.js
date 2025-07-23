@@ -31,5 +31,6 @@ app.get('/', (req, res) => {
   res.send('API Backend Express berjalan!');
 });
 
-// ❌ Jangan ada app.listen() di sini!
+
+
 module.exports = app; // ✅ WAJIB ADA agar bisa dipakai di server.js

@@ -66,7 +66,7 @@ const DataUang: React.FC = () => {
     const [editingData, setEditingData] = useState<Transaksi | null>(null);
     const [editingType, setEditingType] = useState<"masuk" | "keluar">("masuk");
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL!;
 
     useEffect(() => {
         fetchData("masuk");
